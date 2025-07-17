@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie</title>
+    <style>
+
+        h3 {
+            margin: 10px;
+        }
+        .movie-row {
+            margin-bottom: 30px;
+        }
+
+        .card {
+            display: inline-block;
+            margin: 10px;
+            vertical-align: top;
+            width: 200px;
+        }
+
+        .card img {
+            max-width: 100%;
+            max-height: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Filme</h1>
+        <div>
+            <h2>Filme nach J.R.R. Tolkien</h2>
+            <div id="movierow-1" class="movie-row"></div>
+        </div>
+        <div>
+            <h2>Filme nach Stephen King</h2>
+            <div id="movierow-2" class="movie-row"></div>
+        </div>
+        <div>
+            <h2>Star Trek - Universum</h2>
+            <div id="movierow-3" class="movie-row"></div>
+        </div>
+    </div>
+
+    <script>
+        const movieIds = [
+            [
+                "tt0120737",
+                "tt0167261",
+                "tt0167260",
+                "tt0903624",
+                "tt1170358",
+                "tt2310332",
+            ],
+            [
+                "tt0108941",
+                "tt0099864",
+                "tt1212452",
+                "tt0120689",
+                "tt0109642",
+                "tt0118460",
+            ],
+            [
+                "tt0079945",
+                "tt0084726",
+                "tt0088170",
+                "tt0092007",
+                "tt0098382",
+                "tt0102975",
+            ],
+        ];
+
+        function loadAllRows() {
+            for (let row = 0; row < movieIds.length; row++) {
+                loadMovieRow(`movierow-${row + 1}`, movieIds[row]);
+            }
+        }
+
+        async function loadMovieRow(rowId, ids) {
+            const container = document.getElementById(rowId);
+            container.innerHTML = "Loading...";
+            let cardsHtml = "";
+
+            for (let i = 0; i < ids.length; i++) {
+                const id = ids[i];
+                if (!id) continue;
+                try {
+                    const response = await fetch(
+                        `http://www.omdbapi.com/?i=${id}&apikey=bd730f97&index=${0}`
+                    );
+                    const movie = await response.json();
+                    console.log(movie);
+                    cardsHtml += `
+                <div class="card" >
+            <h4>${movie.Title}</h4>
+            <img src="${movie.Poster}" alt="Poster" style="max-width:200px;">
+            <p>${movie.Plot}</p>
+            </div>
+                `;
+                } catch (e) { }
+            }
+            container.innerHTML = cardsHtml;
+        }
+        document.addEventListener("DOMContentLoaded", loadAllRows);
+        document.addEventListener("DOMContentLoaded", function () {
+            loadMovieRow("movierow-1", movieIds[0]);
+            loadMovieRow("movierow-2", movieIds[1]);
+            loadMovieRow("movierow-3", movieIds[2]);
+        });
+    </script>
+</body>
+
+</html>
