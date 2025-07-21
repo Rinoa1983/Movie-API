@@ -10,6 +10,10 @@
             margin: 10px;
         }
 
+        #searchheading {
+            display: none;
+        }
+
         .movie-row {
             margin-bottom: 30px;
         }
@@ -53,8 +57,6 @@
         .plot {
             display: flex;
             align-items: center;
-            justify-content: center;
-            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -67,7 +69,6 @@
             transition: opacity 0.3s;
             text-align: center;
             padding: 10px;
-            box-sizing: border-box;
             z-index: 2;
         }
 
@@ -85,6 +86,11 @@
 <body>
     <div class="container">
         <h1>Filme</h1>
+        <input type="text" placeholder="Filme suchen" id="searchmovie">
+        <div>
+            <h2 id="searchheading">Suchergebnisse</h2>
+            <div id="moviesearch" class="movie-row"></div>
+        </div>
         <div>
             <h2>Filme nach J.R.R. Tolkien</h2>
             <div id="movierow-1" class="movie-row"></div>
@@ -165,7 +171,52 @@
             loadMovieRow("movierow-1", movieIds[0]);
             loadMovieRow("movierow-2", movieIds[1]);
             loadMovieRow("movierow-3", movieIds[2]);
+
+
+           const searchInput = document.getElementById("searchmovie");
+    const searchDiv = document.getElementById("moviesearch");
+    const searchHeading = document.getElementById("searchheading");
+    
+    searchDiv.style.display = "none";
+    searchHeading.style.display = "none";
+
+    searchInput.addEventListener("input", async function () {
+        const query = searchInput.value.trim();
+        if (!query) {
+            searchDiv.style.display = "none";
+            searchHeading.style.display = "none";
+            searchDiv.innerHTML = "";
+            return;
+        }
+
+        const response = await fetch(`https://www.omdbapi.com/?s=${encodeURIComponent(query)}&?i=ID&apikey=bd730f97`);
+        const data = await response.json();
+
+        if (data.Search && data.Search.length > 0) {
+            let cardsHtml = "";
+            for (const movie of data.Search) {
+                try {
+                const detailResponse = await fetch(`https://www.omdbapi.com/?i=${movie.imdbID}&apikey=bd730f97`);
+                const detail = await detailResponse.json();
+                cardsHtml += `
+                    <div class="card">
+                        <h4>${detail.Title}</h4>
+                        <div class="img-container">
+                            <img src="${detail.Poster}" alt="Poster" class="card-img">
+                            <div class="plot">${detail.Plot}</div>
+                        </div>
+                    </div>
+                `;
+                 } catch (e) {}
+            }
+            searchDiv.innerHTML = cardsHtml;
+            searchDiv.style.display = "flex";
+            searchHeading.style.display = "block";
+        } 
+    });
         });
+
+
     </script>
 </body>
 
