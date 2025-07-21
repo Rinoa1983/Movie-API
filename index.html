@@ -4,131 +4,16 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css">
     <title>Movie</title>
-    <style>
-        h3 {
-            margin: 10px;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: repeat(6, auto);
-            grid-template-rows: repeat(6, auto);
-        }
-        .container h1 {
-            grid-row: 1;
-            grid-column: 1 / span 6;
-        }
-
-        #searchmovie {
-            /* grid-column: 1; */
-            grid-row: 2;
-            width: 200px;
-            grid-column: 1 / span 6;
-        }
-
-        #searchDIV {
-            grid-row: 3;
-            grid-column: 1 / span 6;
-            width: 100%;
-            display: none;
-        }
-
-        #movie1 {
-            grid-row: 4;
-            grid-column: 1 / span 6;
-        }
-
-        #movie2 {
-            grid-row: 5;
-            grid-column: 1 / span 6;
-        }
-
-        #movie3 {
-            grid-row: 6;
-            grid-column: 1 / span 6;
-        }
-
-        
-
-        #searchheading {
-            display: none;
-        }
-
-        .movie-row {
-            margin-bottom: 30px;
-        }
-
-        .card {
-            /* grid-row: 2 / 3; */
-            display: inline-block;
-            position: relative;
-            margin: 10px;
-            vertical-align: top;
-            width: 200px;
-        }
-
-        .card img {
-            max-width: 100%;
-            max-height: 300px;
-        }
-
-
-        .img-container {
-            position: relative;
-            width: 200px;
-            height: 300px;
-        }
-
-        .card-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: filter 0.3s;
-        }
-
-
-        .card .plot {
-            background: rgba(255,255,255,0.2);
-            padding: 8px;
-            position: absolute;
-            width: 180px;
-            z-index: 2;
-        }
-
-        .plot {
-            display: flex;
-            align-items: center;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            color: #222;
-            background: rgba(255,255,255,0.4);
-            font-weight: bold;
-            font-size: 1em;
-            opacity: 0;
-            transition: opacity 0.3s;
-            text-align: center;
-            padding: 10px;
-            z-index: 2;
-        }
-
-        .img-container:hover .card-img {
-            filter: blur(3px);
-        }
-
-        .img-container:hover .plot {
-            opacity: 1;
-        }
-
-    </style>
+    <script src="https://kit.fontawesome.com/88b71a012c.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
     <div class="container">
         <h1>Filme</h1>
         <input type="text" placeholder="Filme suchen" id="searchmovie">
+        <button id="searchBtn"><i class="fa-solid fa-magnifying-glass"></i></button>
         <div id="searchDiv">
             <h2 id="searchheading">Suchergebnisse</h2>
             <div id="moviesearch" class="movie-row"></div>
@@ -144,6 +29,10 @@
         <div id="movie3">
             <h2>Star Trek - Universum</h2>
             <div id="movierow-3" class="movie-row"></div>
+        </div>
+        <div id="watchlist-row">
+            <h2>Deine Watchlist</h2>
+            <div id="watchlist-cards" class="movie-row"></div>
         </div>
     </div>
 
@@ -175,89 +64,153 @@
             ],
         ];
 
-        function loadAllRows() {
-            for (let row = 0; row < movieIds.length; row++) {
-                loadMovieRow(`movierow-${row + 1}`, movieIds[row]);
-            }
-        }
-
-        async function loadMovieRow(rowId, ids) {
-            const container = document.getElementById(rowId);
-            container.innerHTML = "Loading...";
-            let cardsHtml = "";
-
-            for (let i = 0; i < ids.length; i++) {
-                const id = ids[i];
-                if (!id) continue;
-                try {
-                    const response = await fetch(
-                        `http://www.omdbapi.com/?i=${id}&apikey=bd730f97`
-                    );
-                    const movie = await response.json();
-                    console.log(movie);
-                    cardsHtml += `
-                <div class="card" >
-            <h4>${movie.Title}</h4>
-            <div class="img-container">
-            <img src="${movie.Poster}" alt="Poster" class="card-img">
-            <div class="plot">${movie.Plot}</div>
-            </div>
-            </div>
-                `;
-                } catch (e) { }
-            }
-            container.innerHTML = cardsHtml;
-        }
-        document.addEventListener("DOMContentLoaded", loadAllRows);
         document.addEventListener("DOMContentLoaded", function () {
-            loadMovieRow("movierow-1", movieIds[0]);
-            loadMovieRow("movierow-2", movieIds[1]);
-            loadMovieRow("movierow-3", movieIds[2]);
+            // --- Watchlist Funktionen ---
+            function getWatchlist() {
+                return JSON.parse(localStorage.getItem("watchlist") || "[]");
+            }
+            function saveWatchlist(list) {
+                localStorage.setItem("watchlist", JSON.stringify(list));
+            }
+            function toggleWatchlist(id) {
+                let list = getWatchlist();
+                if (list.includes(id)) {
+                    list = list.filter(x => x !== id);
+                } else {
+                    list.push(id);
+                }
+                saveWatchlist(list);
+                renderWatchlist();
+                loadAllRows();
+            }
+            function isInWatchlist(id) {
+                return getWatchlist().includes(id);
+            }
+            function animateHeart(el) {
+                el.classList.add("animate-heart");
+                setTimeout(() => el.classList.remove("animate-heart"), 300);
+            }
 
-
-           const searchInput = document.getElementById("searchmovie");
-    const searchDiv = document.getElementById("moviesearch");
-    const searchHeading = document.getElementById("searchheading");
-    
-    searchDiv.style.display = "none";
-    searchHeading.style.display = "none";
-
-    searchInput.addEventListener("input", async function () {
-        const query = searchInput.value.trim();
-        if (!query) {
-            searchDiv.style.display = "none";
-            searchHeading.style.display = "none";
-            searchDiv.innerHTML = "";
-            return;
-        }
-
-        const response = await fetch(`https://www.omdbapi.com/?s=${encodeURIComponent(query)}&?i=ID&apikey=bd730f97`);
-        const data = await response.json();
-
-        if (data.Search && data.Search.length > 0) {
-            let cardsHtml = "";
-            for (const movie of data.Search) {
-                try {
-                const detailResponse = await fetch(`https://www.omdbapi.com/?i=${movie.imdbID}&apikey=bd730f97`);
-                const detail = await detailResponse.json();
-                cardsHtml += `
+            // --- Kartenfunktion ---
+            async function renderCards(container, ids) {
+                let cardsHtml = "";
+                for (const id of ids) {
+                    try {
+                        const response = await fetch(`https://www.omdbapi.com/?i=${id}&apikey=d66efe54`);
+                        const movie = await response.json();
+                        const heartClass = isInWatchlist(id) ? "fa-solid" : "fa-regular";
+                        cardsHtml += `
                     <div class="card">
-                        <h4>${detail.Title}</h4>
+                        <h4>
+                            ${movie.Title}
+                            <i class="fa-heart ${heartClass} heart-icon" data-id="${id}"></i>
+                        </h4>
                         <div class="img-container">
-                            <img src="${detail.Poster}" alt="Poster" class="card-img">
-                            <div class="plot">${detail.Plot}</div>
+                            <img src="${movie.Poster}" alt="Poster" class="card-img">
+                            <div class="plot">${movie.Plot}</div>
                         </div>
                     </div>
                 `;
-                 } catch (e) {}
+                    } catch (e) { }
+                }
+                container.innerHTML = cardsHtml;
+                container.querySelectorAll(".heart-icon").forEach(icon => {
+                    icon.onclick = function () {
+                        animateHeart(this);
+                        toggleWatchlist(this.dataset.id);
+                    };
+                });
             }
-            searchDiv.innerHTML = cardsHtml;
-            searchDiv.style.display = "block";
-            searchHeading.style.display = "block";
-        } 
-    });
-        });
 
+            // --- Watchlist anzeigen ---
+            function renderWatchlist() {
+                const list = getWatchlist();
+                const row = document.getElementById("watchlist-row");
+                const cards = document.getElementById("watchlist-cards");
+                if (list.length === 0) {
+                    row.style.display = "none";
+                    cards.innerHTML = "";
+                    return;
+                }
+                row.style.display = "block";
+                renderCards(cards, list);
+            }
+
+            // --- Hauptreihen laden ---
+            async function loadAllRows() {
+                for (let row = 0; row < movieIds.length; row++) {
+                    const container = document.getElementById(`movierow-${row + 1}`);
+                    await renderCards(container, movieIds[row]);
+                }
+                renderWatchlist();
+            }
+
+            // --- Initiales Laden ---
+            loadAllRows();
+
+            // --- Suchfunktion ---
+            const searchInput = document.getElementById("searchmovie");
+            const searchBtn = document.getElementById("searchBtn");
+            const searchDiv = document.getElementById("moviesearch");
+            const searchHeading = document.getElementById("searchheading");
+            const searchContainer = document.getElementById("searchDiv");
+
+            // Anfangs ausblenden
+            searchContainer.style.display = "none";
+            searchHeading.style.display = "none";
+            searchDiv.innerHTML = "";
+
+            searchBtn.addEventListener("click", async function () {
+                const query = searchInput.value.trim();
+                if (!query) {
+                    searchContainer.style.display = "none";
+                    searchHeading.style.display = "none";
+                    searchDiv.innerHTML = "";
+                    return;
+                }
+
+                // Spinner anzeigen
+                searchDiv.innerHTML = `<i class="fa-solid fa-spinner my-spinner"></i>`;
+                searchContainer.style.display = "block";
+                searchHeading.style.display = "block";
+
+                // OMDb-API Suche
+                const response = await fetch(`https://www.omdbapi.com/?s=${encodeURIComponent(query)}&apikey=d66efe54`);
+                const data = await response.json();
+
+                if (data.Search && data.Search.length > 0) {
+                    let cardsHtml = "";
+                    for (const movie of data.Search) {
+                        try {
+                            // Detaildaten für Plot
+                            const detailResponse = await fetch(`https://www.omdbapi.com/?i=${movie.imdbID}&apikey=d66efe54`);
+                            const detail = await detailResponse.json();
+                            const heartClass = isInWatchlist(movie.imdbID) ? "fa-solid" : "fa-regular";
+                            cardsHtml += `
+                        <div class="card">
+                            <h4>
+                                ${detail.Title}
+                                <i class="fa-heart ${heartClass} heart-icon" data-id="${movie.imdbID}"></i>
+                            </h4>
+                            <div class="img-container">
+                                <img src="${detail.Poster}" alt="Poster" class="card-img">
+                                <div class="plot">${detail.Plot}</div>
+                            </div>
+                        </div>
+                    `;
+                        } catch (e) { }
+                    }
+                    searchDiv.innerHTML = cardsHtml;
+                    // Herz-EventListener & Animation für Suchergebnisse
+                    searchDiv.querySelectorAll(".heart-icon").forEach(icon => {
+                        icon.onclick = function () {
+                            animateHeart(this);
+                            toggleWatchlist(this.dataset.id);
+                        };
+                    });
+                }
+            });
+        });
 
     </script>
 </body>
