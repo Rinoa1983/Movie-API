@@ -10,6 +10,47 @@
             margin: 10px;
         }
 
+        .container {
+            display: grid;
+            grid-template-columns: repeat(6, auto);
+            grid-template-rows: repeat(6, auto);
+        }
+        .container h1 {
+            grid-row: 1;
+            grid-column: 1 / span 6;
+        }
+
+        #searchmovie {
+            /* grid-column: 1; */
+            grid-row: 2;
+            width: 200px;
+            grid-column: 1 / span 6;
+        }
+
+        #searchDIV {
+            grid-row: 3;
+            grid-column: 1 / span 6;
+            width: 100%;
+            display: none;
+        }
+
+        #movie1 {
+            grid-row: 4;
+            grid-column: 1 / span 6;
+        }
+
+        #movie2 {
+            grid-row: 5;
+            grid-column: 1 / span 6;
+        }
+
+        #movie3 {
+            grid-row: 6;
+            grid-column: 1 / span 6;
+        }
+
+        
+
         #searchheading {
             display: none;
         }
@@ -19,6 +60,7 @@
         }
 
         .card {
+            /* grid-row: 2 / 3; */
             display: inline-block;
             position: relative;
             margin: 10px;
@@ -87,19 +129,19 @@
     <div class="container">
         <h1>Filme</h1>
         <input type="text" placeholder="Filme suchen" id="searchmovie">
-        <div>
+        <div id="searchDiv">
             <h2 id="searchheading">Suchergebnisse</h2>
             <div id="moviesearch" class="movie-row"></div>
         </div>
-        <div>
+        <div id="movie1">
             <h2>Filme nach J.R.R. Tolkien</h2>
             <div id="movierow-1" class="movie-row"></div>
         </div>
-        <div>
+        <div id="movie2">
             <h2>Filme nach Stephen King</h2>
             <div id="movierow-2" class="movie-row"></div>
         </div>
-        <div>
+        <div id="movie3">
             <h2>Star Trek - Universum</h2>
             <div id="movierow-3" class="movie-row"></div>
         </div>
@@ -210,7 +252,7 @@
                  } catch (e) {}
             }
             searchDiv.innerHTML = cardsHtml;
-            searchDiv.style.display = "flex";
+            searchDiv.style.display = "block";
             searchHeading.style.display = "block";
         } 
     });
