@@ -4,20 +4,21 @@
 }
 
 body {
-    background-color: #263238;
+    background: rgba(74, 170, 224, 5.45);
+    background: linear-gradient(45deg, rgba(74, 170, 224, 0.5) 1%, rgba(254, 217, 5, 0.5) 50%, rgba(229, 49, 138, 0.5) 100%);
     font-family: Merienda;
-    color: #00897B;
+    color: #00695C;
 }
 
 .container {
     display: grid;
-    grid-template-columns: repeat(6, auto);
+    grid-template-columns: repeat(6, 1fr);
     grid-template-rows: (auto);
-    gap: 20px;
+    /* gap: 20px; */
 
     h1 {
         margin-top: 15px;
-        font-size: 40px;
+        font-size: 50px;
         text-decoration: underline;
         text-decoration-style: double;
         text-decoration-color: #9575CD;
@@ -27,21 +28,57 @@ body {
         justify-content: center;
     }
 
-    #searchmovie {
+
+
+    #searchBar {
         grid-row: 2;
-        width: 200px;
-        grid-column: 1;
+        grid-column: 1 / span 7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        #searchmovie {
+            width: 400px;
+            height: 40px;
+            text-align: center;
+            color: #00695C;
+            font-size: larger;
+            font-family: Merienda;
+            border: 3px solid #00695C;
+            border-radius: 10px;
+            margin-right: 20px;
+        }
+
+        #searchBtn {
+            width: 45px;
+            height: 45px;
+        }
+
+
+        .btn-grad {
+            background-image: linear-gradient(to right, #BE93C5 0%, #7BC6CC 51%, #BE93C5 100%);
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: #00695C;
+            border-radius: 10px;
+        }
+
+        .btn-grad:hover {
+            background-position: right center;
+            /* change the direction of the change here */
+            color: #00695C;
+            text-decoration: none;
+        }
     }
 
-    #searchBtn {
-        grid-row: 2;
-        grid-column: 2;
-    }
+
 
     #searchDiv {
         grid-row: 3;
-        grid-column: 1 / span 6;
-        width: 100%;
+        grid-column: 1 / span 7;
+        /* width: 100%; */
         display: none;
 
         #searchheading {
@@ -51,45 +88,61 @@ body {
 
     #movie1 {
         grid-row: 4;
-        grid-column: 1 / span 6;
+        grid-column: 1 / span 7;
     }
 
     #movie2 {
         grid-row: 5;
-        grid-column: 1 /span 6;
+        grid-column: 1 / span 7;
     }
 
     #movie3 {
         grid-row: 6;
-        grid-column: 1 /span 6;
+        grid-column: 1 / span 7;
     }
 
     #watchlist-row {
         grid-row: 7;
-        grid-column: 1 / span 6;
+        grid-column: 1 / span 7;
         display: none;
-        margin-top: 40px;
-        border-top: 2px solid #e74c3c;
+        border-top: 10px solid #9575CD;
 
         h2 {
-            background: #ffe0e0;
-            padding: 10px
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.5)
         }
 
         div {
-            background: #00897B;
+            background: rgba(255, 255, 255, 0.5);
         }
     }
 }
 
+h2 {
+    display: flex;
+    justify-content: center;
+    text-decoration: underline;
+    text-decoration-color: #9575CD;
+    text-decoration-style: double;
+    font-size: 30px;
+}
+
 .movie-row {
-        margin-bottom: 30px;
-    }
+    /* margin-bottom: 30px; */
+    display: flex;
+    justify-content: center;
+}
+
+#searchheading {
+    display: flex;
+    justify-self: center;
+}
 
 .card {
     display: inline-block;
     position: relative;
-    margin: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
     width: 230px;
 
     h4 {
@@ -98,20 +151,21 @@ body {
         justify-content: space-between;
 
         i {
-            cursor:pointer;
+            cursor: pointer;
             transition: transform 0.2s;
         }
     }
+
     .img-container {
         position: relative;
         width: 230px;
         height: 100%;
 
         .card-img {
-        width: 230px;
-        height: 350px;
-        object-fit: cover;
-        transition: filter 0.3s;
+            width: 230px;
+            height: 350px;
+            object-fit: cover;
+            transition: filter 0.3s;
         }
 
         .plot {
@@ -125,7 +179,7 @@ body {
             top: 0;
             left: 0;
             height: 335px;
-            color: #222;
+            color: black;
             font-weight: bold;
             font-size: 1em;
             opacity: 0;
@@ -146,7 +200,7 @@ body {
 .my-spinner {
     display: inline-block;
     animation: spin 2.5s linear infinite;
-    color: #B197FC;
+    color: #9575CD;
     font-size: 4em;
 }
 
